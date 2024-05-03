@@ -37,33 +37,7 @@ public class AdopetConsoleApplication {
                 } else if (opcaoEscolhida == 2) {
                     cadastrarAbrigo();
                 } else if (opcaoEscolhida == 3) {
-                    System.out.println("Digite o id ou nome do abrigo:");
-                    String idOuNome = new Scanner(System.in).nextLine();
-
-                    HttpClient client = HttpClient.newHttpClient();
-                    String uri = "http://localhost:8080/abrigos/" +idOuNome +"/pets";
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create(uri))
-                            .method("GET", HttpRequest.BodyPublishers.noBody())
-                            .build();
-                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                    int statusCode = response.statusCode();
-                    if (statusCode == 404 || statusCode == 500) {
-                        System.out.println("ID ou nome não cadastrado!");
-                        continue;
-                    }
-                    String responseBody = response.body();
-                    JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
-                    System.out.println("Pets cadastrados:");
-                    for (JsonElement element : jsonArray) {
-                        JsonObject jsonObject = element.getAsJsonObject();
-                        long id = jsonObject.get("id").getAsLong();
-                        String tipo = jsonObject.get("tipo").getAsString();
-                        String nome = jsonObject.get("nome").getAsString();
-                        String raca = jsonObject.get("raca").getAsString();
-                        int idade = jsonObject.get("idade").getAsInt();
-                        System.out.println(id +" - " +tipo +" - " +nome +" - " +raca +" - " +idade +" ano(s)");
-                    }
+                    listarPetsDoAbrigo();
                 } else if (opcaoEscolhida == 4) {
                     System.out.println("Digite o id ou nome do abrigo:");
                     String idOuNome = new Scanner(System.in).nextLine();
@@ -181,6 +155,35 @@ public class AdopetConsoleApplication {
         } else if (statusCode == 400 || statusCode == 500) {
             System.out.println("Erro ao cadastrar o abrigo:");
             System.out.println(responseBody);
+        }
+    }
+
+    private static void listarPetsDoAbrigo() throws IOException, InterruptedException {
+        System.out.println("Digite o id ou nome do abrigo:");
+        String idOuNome = new Scanner(System.in).nextLine();
+
+        HttpClient client = HttpClient.newHttpClient();
+        String uri = "http://localhost:8080/abrigos/" +idOuNome +"/pets";
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(uri))
+                .method("GET", HttpRequest.BodyPublishers.noBody())
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        int statusCode = response.statusCode();
+        if (statusCode == 404 || statusCode == 500) {
+            System.out.println("ID ou nome não cadastrado!");
+        }
+        String responseBody = response.body();
+        JsonArray jsonArray = JsonParser.parseString(responseBody).getAsJsonArray();
+        System.out.println("Pets cadastrados:");
+        for (JsonElement element : jsonArray) {
+            JsonObject jsonObject = element.getAsJsonObject();
+            long id = jsonObject.get("id").getAsLong();
+            String tipo = jsonObject.get("tipo").getAsString();
+            String nome = jsonObject.get("nome").getAsString();
+            String raca = jsonObject.get("raca").getAsString();
+            int idade = jsonObject.get("idade").getAsInt();
+            System.out.println(id +" - " +tipo +" - " +nome +" - " +raca +" - " +idade +" ano(s)");
         }
     }
 }
