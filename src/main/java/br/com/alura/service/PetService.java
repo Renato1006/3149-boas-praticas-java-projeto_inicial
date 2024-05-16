@@ -48,11 +48,15 @@ public class PetService {
     }
 
     public void importarPetsDoAbrigo() throws IOException, InterruptedException {
+        Scanner sc = new Scanner(System.in);
+
         System.out.println("Digite o id ou nome do abrigo:");
-        String idOuNome = new Scanner(System.in).nextLine();
+        String idOuNome = sc.nextLine();
 
         System.out.println("Digite o nome do arquivo CSV:");
-        String nomeArquivo = new Scanner(System.in).nextLine();
+        String nomeArquivo = sc.nextLine();
+
+        sc.close();
 
         BufferedReader reader = null;
         try {
